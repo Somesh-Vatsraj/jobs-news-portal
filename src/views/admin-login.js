@@ -1,20 +1,21 @@
 import { layout } from './layout.js';
+import { esc } from '../utils.js';
 
 export function adminLoginPage({ settings, baseUrl, error = '', setupMode = false }) {
   const title = setupMode ? 'Create Admin Account' : 'Admin Login';
-  const action = setupMode ? '/admin/setup' : '/admin/login';
+  const action = setupMode ? '/admin/setup' : '/api/auth/login';
   return layout({
     settings,
     title,
     noindex: true,
-    canonical: baseUrl + action,
+    canonical: baseUrl + '/admin/login',
     body: `
 <div class="admin-auth container">
   <div class="auth-card">
     <h1>${title}</h1>
-    ${error ? `<div class="alert alert-error">${error}</div>` : ''}
+    ${error ? `<div class="alert alert-error">${esc(error)}</div>` : ''}
     ${setupMode ? '<p class="muted small">No admin exists yet. Create the first admin account.</p>' : ''}
-    <form method="post" action="${action}" class="auth-form" autocomplete="off">
+    <form id="adminLoginForm" method="post" action="${action}" class="auth-form" autocomplete="off" data-admin-login="${setupMode ? 'setup' : 'login'}">
       ${setupMode ? `
       <label>Name
         <input type="text" name="name" required maxlength="120">
@@ -26,6 +27,7 @@ export function adminLoginPage({ settings, baseUrl, error = '', setupMode = fals
         <input type="password" name="password" required minlength="8" maxlength="200" autocomplete="${setupMode ? 'new-password' : 'current-password'}">
       </label>
       <button class="btn btn-primary btn-block" type="submit">${setupMode ? 'Create Admin' : 'Sign In'}</button>
+      <div class="auth-status" data-status aria-live="polite"></div>
     </form>
   </div>
 </div>`
