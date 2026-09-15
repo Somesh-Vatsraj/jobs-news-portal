@@ -151,7 +151,8 @@ export function jobDetailPage({ settings, job, related, categories = [], baseUrl
     type: 'article',
     jsonLd,
     active: 'jobs',
-    body
+    body,
+    bodyClass: 'detail-page'
   });
 }
 
