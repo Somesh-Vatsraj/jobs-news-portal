@@ -6,7 +6,6 @@ import { esc, formatDate } from '../utils.js';
 import { jobPostingJsonLd, breadcrumbJsonLd } from '../seo.js';
 
 function safeHtml(html) {
-  // Content is already sanitized on save. Rendered as-is for long-form layout.
   return html || '';
 }
 
@@ -31,7 +30,7 @@ export function jobDetailPage({ settings, job, related, baseUrl }) {
 
   <header class="job-header">
     <div class="job-header-top">
-      ${job.thumbnail ? `<img class="job-thumb-lg" src="${esc(job.thumbnail)}" alt="${esc(job.thumbnail_alt || job.title)}" loading="lazy" width="80" height="80">` : ''}
+      ${job.thumbnail ? `<img class="job-thumb-lg" src="${esc(job.thumbnail)}" alt="${esc(job.thumbnail_alt || job.title)}" loading="lazy" width="140" height="140">` : ''}
       <div>
         <h1>${esc(job.title)}</h1>
         <p class="company-lg">${esc(job.company)}</p>
@@ -59,6 +58,15 @@ export function jobDetailPage({ settings, job, related, baseUrl }) {
          <p class="muted small">You will be redirected to <strong>${esc(applyHost)}</strong></p>`
       : `<p class="muted">Application link not provided.</p>`}
   </div>
+
+  ${job.thumbnail ? `
+  <figure class="featured-image job-featured-image">
+    <img src="${esc(job.thumbnail)}"
+         alt="${esc(job.thumbnail_alt || job.title)}"
+         loading="lazy"
+         width="1200"
+         height="675">
+  </figure>` : ''}
 
   ${AdSlot({ position: 'in-content', settings })}
 
