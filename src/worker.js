@@ -19,7 +19,7 @@ import {
   adminSubmissionAction, adminCategoryPost, adminCategoryDelete, adminSettingsPost
 } from './routes/admin.js';
 import { submitPageRoute, submissionCreateApi } from './routes/submissions.js';
-import { debugStatus } from './routes/debug.js';
+import { debugStatus, debugVerify, debugResetAdmin } from './routes/debug.js';
 
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
@@ -60,8 +60,10 @@ async function handle(request, env, ctx) {
     if (env.ASSETS) return env.ASSETS.fetch(request);
   }
 
-  // Debug (safe, read-only)
+  // ---- DEBUG ROUTES (remove after fixing login) ----
   if (method === 'GET' && path === '/api/debug/status') return debugStatus(request, env);
+  if (method === 'POST' && path === '/api/debug/verify') return debugVerify(request, env);
+  if (method === 'POST' && path === '/api/debug/reset-admin') return debugResetAdmin(request, env);
 
   // PUBLIC PAGES
   if (method === 'GET' && path === '/') return homeRoute(request, env, ctx);
