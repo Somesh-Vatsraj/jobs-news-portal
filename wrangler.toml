@@ -1,0 +1,16 @@
+name = "jobs-news-portal"
+main = "src/worker.js"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "jobs-news-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[observability]
+enabled = true
