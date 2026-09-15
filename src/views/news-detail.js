@@ -83,12 +83,9 @@ export function newsDetailPage({ settings, article, relatedNews, relatedJobs, ca
 
     ${(article.tags || '').trim() ? `<div class="tags-row">${article.tags.split(',').map(t => `<span class="tag">#${esc(t.trim())}</span>`).join('')}</div>` : ''}
 
-    <section class="how-to-apply">
+    <section class="content-section">
       <h2>Share this article</h2>
-      <p>Help others discover this article — share it with your network.</p>
-      <div class="apply-btn-wrap">
-        ${ShareButtons({ url, title: article.title })}
-      </div>
+      ${ShareButtons({ url, title: article.title })}
     </section>
 
     ${relatedNews.length ? `
@@ -116,6 +113,7 @@ export function newsDetailPage({ settings, article, relatedNews, relatedJobs, ca
     type: 'article',
     jsonLd,
     active: 'news',
-    body
+    body,
+    bodyClass: 'detail-page'
   });
 }
