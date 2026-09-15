@@ -9,7 +9,40 @@ function safeHtml(html) {
   return html || '';
 }
 
-export function jobDetailPage({ settings, job, related, baseUrl }) {
+function sidebar({ categories }) {
+  const jobCats = categories.filter(c => c.type === 'job');
+  const newsCats = categories.filter(c => c.type === 'news');
+  return `
+<aside class="detail-sidebar">
+  <div class="sidebar-card">
+    <h3 class="sidebar-title">Job Categories</h3>
+    <ul class="sidebar-list">
+      ${jobCats.map(c => `
+        <li>
+          <a href="/jobs?category=${encodeURIComponent(c.name)}">
+            <span class="sidebar-icon">${esc(c.name.charAt(0))}</span>
+            <span>${esc(c.name)}</span>
+          </a>
+        </li>`).join('')}
+    </ul>
+  </div>
+
+  <div class="sidebar-card">
+    <h3 class="sidebar-title">News Categories</h3>
+    <ul class="sidebar-list">
+      ${newsCats.map(c => `
+        <li>
+          <a href="/news?category=${encodeURIComponent(c.name)}">
+            <span class="sidebar-icon">${esc(c.name.charAt(0))}</span>
+            <span>${esc(c.name)}</span>
+          </a>
+        </li>`).join('')}
+    </ul>
+  </div>
+</aside>`;
+}
+
+export function jobDetailPage({ settings, job, related, categories = [], baseUrl }) {
   const url = `${baseUrl}/jobs/${job.slug}`;
   const jsonLd = jobPostingJsonLd(job, baseUrl) + breadcrumbJsonLd([
     { name: 'Home', url: baseUrl + '/' },
@@ -23,82 +56,91 @@ export function jobDetailPage({ settings, job, related, baseUrl }) {
   try { if (hasExternalApply) applyHost = new URL(applyUrl).hostname; } catch {}
 
   const body = `
-<article class="job-detail container">
+<div class="container">
   <nav class="breadcrumbs" aria-label="Breadcrumb">
     <a href="/">Home</a> <span>/</span> <a href="/jobs">Jobs</a> <span>/</span> <span>${esc(job.title)}</span>
   </nav>
+</div>
 
-  <header class="job-header">
-    <div class="job-header-top">
-      ${job.thumbnail ? `<img class="job-thumb-lg" src="${esc(job.thumbnail)}" alt="${esc(job.thumbnail_alt || job.title)}" loading="lazy" width="140" height="140">` : ''}
-      <div>
-        <h1>${esc(job.title)}</h1>
-        <p class="company-lg">${esc(job.company)}</p>
+<div class="container detail-layout">
+  <article class="job-detail">
+
+    <header class="job-header">
+      <div class="job-header-top">
+        ${job.thumbnail ? `<img class="job-thumb-lg" src="${esc(job.thumbnail)}" alt="${esc(job.thumbnail_alt || job.title)}" loading="lazy" width="140" height="140">` : ''}
+        <div>
+          <h1>${esc(job.title)}</h1>
+          <p class="company-lg">${esc(job.company)}</p>
+        </div>
       </div>
+      <div class="job-tags">
+        ${job.category ? `<span class="tag">${esc(job.category)}</span>` : ''}
+        ${job.job_type ? `<span class="tag">${esc(job.job_type)}</span>` : ''}
+        ${job.work_from_home ? `<span class="tag tag-wfh">Work From Home</span>` : ''}
+        ${job.featured ? `<span class="tag tag-featured">Featured</span>` : ''}
+      </div>
+    </header>
+
+    <div class="job-info-grid">
+      ${job.location ? `<div><span>Location</span><strong>${esc(job.location)}</strong></div>` : ''}
+      ${job.salary ? `<div><span>Salary</span><strong>${esc(job.salary)}</strong></div>` : ''}
+      ${job.experience ? `<div><span>Experience</span><strong>${esc(job.experience)}</strong></div>` : ''}
+      ${job.job_type ? `<div><span>Type</span><strong>${esc(job.job_type)}</strong></div>` : ''}
+      <div><span>Posted</span><strong>${esc(formatDate(job.published_at || job.created_at))}</strong></div>
     </div>
-    <div class="job-tags">
-      ${job.category ? `<span class="tag">${esc(job.category)}</span>` : ''}
-      ${job.job_type ? `<span class="tag">${esc(job.job_type)}</span>` : ''}
-      ${job.work_from_home ? `<span class="tag tag-wfh">Work From Home</span>` : ''}
-      ${job.featured ? `<span class="tag tag-featured">Featured</span>` : ''}
+
+    <div class="job-apply-top">
+      ${hasExternalApply
+        ? `<a class="btn btn-primary btn-lg" href="/apply/${esc(job.slug)}" rel="noopener noreferrer">Apply Now</a>
+           <p class="muted small">You will be redirected to <strong>${esc(applyHost)}</strong></p>`
+        : `<p class="muted">Application link not provided.</p>`}
     </div>
-  </header>
 
-  <div class="job-info-grid">
-    ${job.location ? `<div><span>Location</span><strong>${esc(job.location)}</strong></div>` : ''}
-    ${job.salary ? `<div><span>Salary</span><strong>${esc(job.salary)}</strong></div>` : ''}
-    ${job.experience ? `<div><span>Experience</span><strong>${esc(job.experience)}</strong></div>` : ''}
-    ${job.job_type ? `<div><span>Type</span><strong>${esc(job.job_type)}</strong></div>` : ''}
-    <div><span>Posted</span><strong>${esc(formatDate(job.published_at || job.created_at))}</strong></div>
-  </div>
+    ${job.thumbnail ? `
+    <figure class="featured-image job-featured-image">
+      <img src="${esc(job.thumbnail)}"
+           alt="${esc(job.thumbnail_alt || job.title)}"
+           loading="lazy"
+           width="1200"
+           height="675">
+    </figure>` : ''}
 
-  <div class="job-apply-top">
-    ${hasExternalApply
-      ? `<a class="btn btn-primary btn-lg" href="/apply/${esc(job.slug)}" rel="noopener noreferrer">Apply Now</a>
-         <p class="muted small">You will be redirected to <strong>${esc(applyHost)}</strong></p>`
-      : `<p class="muted">Application link not provided.</p>`}
-  </div>
+    ${AdSlot({ position: 'in-content', settings })}
 
-  ${job.thumbnail ? `
-  <figure class="featured-image job-featured-image">
-    <img src="${esc(job.thumbnail)}"
-         alt="${esc(job.thumbnail_alt || job.title)}"
-         loading="lazy"
-         width="1200"
-         height="675">
-  </figure>` : ''}
+    <section class="content-section">
+      <h2>Job Description</h2>
+      <div class="rich-content">${safeHtml(job.content)}</div>
+    </section>
+    ${job.responsibilities ? `<section class="content-section"><h2>Responsibilities</h2><div class="rich-content">${safeHtml(job.responsibilities)}</div></section>` : ''}
+    ${job.requirements ? `<section class="content-section"><h2>Requirements</h2><div class="rich-content">${safeHtml(job.requirements)}</div></section>` : ''}
+    ${job.qualifications ? `<section class="content-section"><h2>Qualifications</h2><div class="rich-content">${safeHtml(job.qualifications)}</div></section>` : ''}
+    ${job.benefits ? `<section class="content-section"><h2>Benefits</h2><div class="rich-content">${safeHtml(job.benefits)}</div></section>` : ''}
 
-  ${AdSlot({ position: 'in-content', settings })}
+    <section class="how-to-apply">
+      <h2>How to Apply</h2>
+      <p>Click the button below to open the official application page. You will be redirected to an external website.</p>
+      ${hasExternalApply
+        ? `<div class="apply-btn-wrap">
+             <a class="btn btn-primary btn-lg" href="/apply/${esc(job.slug)}" rel="noopener noreferrer">Apply Now on ${esc(applyHost)}</a>
+           </div>`
+        : ''}
+      <p class="small muted">We do not guarantee the accuracy or genuineness of any listing. Always verify before applying.</p>
+    </section>
 
-  <section class="content-section">
-    <h2>Job Description</h2>
-    <div class="rich-content">${safeHtml(job.content)}</div>
-  </section>
-  ${job.responsibilities ? `<section class="content-section"><h2>Responsibilities</h2><div class="rich-content">${safeHtml(job.responsibilities)}</div></section>` : ''}
-  ${job.requirements ? `<section class="content-section"><h2>Requirements</h2><div class="rich-content">${safeHtml(job.requirements)}</div></section>` : ''}
-  ${job.qualifications ? `<section class="content-section"><h2>Qualifications</h2><div class="rich-content">${safeHtml(job.qualifications)}</div></section>` : ''}
-  ${job.benefits ? `<section class="content-section"><h2>Benefits</h2><div class="rich-content">${safeHtml(job.benefits)}</div></section>` : ''}
+    <section class="content-section">
+      <h2>Share this job</h2>
+      ${ShareButtons({ url, title: job.title })}
+    </section>
 
-  <section class="content-section">
-    <h2>How to Apply</h2>
-    <p>Click the button below to open the official application page. You will be redirected to an external website.</p>
-    ${hasExternalApply
-      ? `<a class="btn btn-primary btn-lg" href="/apply/${esc(job.slug)}" rel="noopener noreferrer">Apply Now on ${esc(applyHost)}</a>`
-      : ''}
-    <p class="small muted">We do not guarantee the accuracy or genuineness of any listing. Always verify before applying.</p>
-  </section>
+    ${related.length ? `
+    <section class="content-section">
+      <h2>Related Jobs</h2>
+      <div class="grid-cards">${related.map(j => JobCard({ job: j })).join('')}</div>
+    </section>` : ''}
+  </article>
 
-  <section class="content-section">
-    <h2>Share this job</h2>
-    ${ShareButtons({ url, title: job.title })}
-  </section>
-
-  ${related.length ? `
-  <section class="content-section">
-    <h2>Related Jobs</h2>
-    <div class="grid-cards">${related.map(j => JobCard({ job: j })).join('')}</div>
-  </section>` : ''}
-</article>
+  ${sidebar({ categories })}
+</div>
 `;
   return layout({
     settings,
