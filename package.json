@@ -10,6 +10,6 @@
     "migrate:remote": "wrangler d1 migrations apply jobs-news-db --remote"
   },
   "devDependencies": {
-    "wrangler": "^3.90.0"
+    "wrangler": "^4.0.0"
   }
 }
