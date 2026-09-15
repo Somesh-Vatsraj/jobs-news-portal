@@ -13,7 +13,8 @@ export function layout({
   jsonLd = '',
   active = '',
   body = '',
-  noindex = false
+  noindex = false,
+  bodyClass = ''
 }) {
   const siteName = settings.site_name || 'Jobs & News India';
   const fullTitle = title ? `${title} | ${siteName}` : (settings.default_seo_title || siteName);
@@ -36,6 +37,7 @@ export function layout({
        <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${esc(ga)}');</script>`
     : '';
   const robots = noindex ? `<meta name="robots" content="noindex, nofollow">` : '';
+  const bodyAttr = bodyClass ? ` class="${esc(bodyClass)}"` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -51,7 +53,7 @@ ${jsonLd}
 ${adsScript}
 ${gaScript}
 </head>
-<body>
+<body${bodyAttr}>
 <a class="skip-link" href="#main">Skip to content</a>
 ${header({ settings, active })}
 <main id="main">${body}</main>
