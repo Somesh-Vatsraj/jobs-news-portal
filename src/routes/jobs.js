@@ -30,7 +30,6 @@ export async function jobsListRoute(request, env) {
   });
   const categories = await listCategories(env, 'job');
 
-  // Build query string without page for pagination
   const qp = new URLSearchParams();
   for (const [k, v] of params.entries()) if (k !== 'page') qp.set(k, v);
   const queryString = qp.toString();
@@ -50,7 +49,12 @@ export async function jobDetailRoute(request, env, slug) {
      ORDER BY published_at DESC LIMIT 3`
   ).bind(job.id, job.category || '', job.work_from_home ? 1 : 0).all();
 
-  const body = jobDetailPage({ settings, job, related: related || [], baseUrl });
+  // Fetch ALL categories (job + news) for sidebar
+  const jobCats = await listCategories(env, 'job');
+  const newsCats = await listCategories(env, 'news');
+  const categories = [...jobCats, ...newsCats];
+
+  const body = jobDetailPage({ settings, job, related: related || [], categories, baseUrl });
   return html(body, 200, { 'cache-control': 'public, max-age=300, s-maxage=1800' });
 }
 
@@ -79,7 +83,7 @@ export async function jobsApiList(request, env) {
   const total = await countJobs(env, { status: 'published', ...filters });
   const pg = paginate(page, perPage, total);
   const jobs = await listJobs(env, { status: 'published', ...filters, limit: perPage, offset: pg.offset });
-  return json({ jobs, page: pg.page, totalPages: pg.totalPages, total: pg.total });
+  return json({ jobs, page: pg.page, totalPages: pg.totalPages, total });
 }
 
 export async function jobsApiGet(request, env, slug) {
