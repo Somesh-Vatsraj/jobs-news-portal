@@ -485,6 +485,9 @@ p { margin: 0 0 1em; }
 .inline-form { display: flex; gap: .4rem; margin-top: 1rem; }
 .inline-form input { flex: 1; padding: .55rem .75rem; border: 1px solid var(--border); border-radius: 8px; font-size: .9rem; }
 
+.auth-status { margin-top: .75rem; font-size: .85rem; min-height: 1.2em; }
+.auth-status.error { color: var(--danger); }
+.auth-status.success { color: var(--success); }
 @media (max-width: 600px) {
   .hero-search { flex-direction: column; padding: .75rem; border-radius: 12px; }
   .hero-search input, .hero-search button { border-radius: 8px; }
