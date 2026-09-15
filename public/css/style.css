@@ -1,5 +1,6 @@
 /* =========================================================
    Jobs & News Portal — Premium UI + Animations
+   (Bigger images on cards + detail pages included)
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
@@ -462,7 +463,7 @@ p { margin: 0 0 1em; }
 /* -------------------- Grids -------------------- */
 .grid-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 1.15rem;
 }
 .grid-news {
@@ -471,7 +472,7 @@ p { margin: 0 0 1em; }
   gap: 1.35rem;
 }
 
-/* -------------------- Job Card -------------------- */
+/* -------------------- Job Card (BIGGER images) -------------------- */
 .job-card {
   position: relative;
   background: var(--surface);
@@ -488,6 +489,7 @@ p { margin: 0 0 1em; }
   background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
   transform: scaleX(0); transform-origin: left;
   transition: transform .4s var(--ease-out);
+  z-index: 2;
 }
 .job-card:hover {
   box-shadow: var(--shadow-xl), 0 0 0 1px rgba(124,58,237,.1);
@@ -496,34 +498,51 @@ p { margin: 0 0 1em; }
 }
 .job-card:hover::before { transform: scaleX(1); }
 .job-card-link { display: block; padding: 1.2rem; color: var(--text); }
+
 .job-card-head {
-  display: flex; gap: .9rem; align-items: center;
+  display: flex; gap: 1rem;
+  align-items: flex-start;
   margin-bottom: .9rem; position: relative;
 }
+
+/* 🔥 Job card thumbnail — अब बड़ा (52px → 88px) */
 .job-thumb {
-  width: 52px; height: 52px; border-radius: 12px;
-  object-fit: cover; background: var(--surface-2);
+  width: 88px;
+  height: 88px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: var(--surface-2);
   flex-shrink: 0;
   transition: transform .3s var(--spring);
   box-shadow: var(--shadow-xs);
 }
-.job-card:hover .job-thumb { transform: scale(1.06) rotate(-2deg); }
+.job-card:hover .job-thumb {
+  transform: scale(1.05) rotate(-2deg);
+}
 .job-thumb.placeholder {
   display: flex; align-items: center; justify-content: center;
   background: linear-gradient(135deg, #ede9fe, #faf5ff);
-  color: var(--primary); font-weight: 900; font-size: 1.25rem;
+  color: var(--primary); font-weight: 900; font-size: 1.9rem;
 }
-.job-card-title { flex: 1; min-width: 0; }
+
+.job-card-title {
+  flex: 1; min-width: 0;
+  padding-top: .15rem;
+}
 .job-card-title h3 {
-  font-size: 1.05rem; margin: 0 0 .2rem;
-  overflow: hidden; text-overflow: ellipsis;
-  white-space: nowrap; font-weight: 700;
+  font-size: 1.08rem; margin: 0 0 .2rem;
+  font-weight: 700;
+  line-height: 1.3;
   transition: color .2s;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .job-card:hover .job-card-title h3 { color: var(--primary); }
 .job-card-title .company {
-  margin: 0; color: var(--muted); font-size: .88rem;
-  font-weight: 500;
+  margin: .15rem 0 0; color: var(--muted);
+  font-size: .9rem; font-weight: 500;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .job-meta {
@@ -566,7 +585,7 @@ p { margin: 0 0 1em; }
 .tag-wfh { background: var(--success-bg); color: #15803d; border-color: transparent; }
 .tag-featured { background: var(--warning-bg); color: #a16207; border-color: transparent; }
 
-/* -------------------- News Card -------------------- */
+/* -------------------- News Card (BIGGER image) -------------------- */
 .news-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -581,8 +600,11 @@ p { margin: 0 0 1em; }
   border-color: transparent;
 }
 .news-card-link { display: block; color: var(--text); }
+
+/* 🔥 News card image — अब थोड़ी ज़्यादा tall (16:9 → 16:10) */
 .news-thumb-wrap {
-  aspect-ratio: 16/9; background: var(--surface-2);
+  aspect-ratio: 16 / 10;
+  background: var(--surface-2);
   overflow: hidden; position: relative;
 }
 .news-thumb-wrap::after {
@@ -745,7 +767,7 @@ p { margin: 0 0 1em; }
 .filter-toggle { display: none; }
 .filter-group { margin-bottom: 1rem; }
 .filter-group label {
-  display: block; font-size: .82rem;
+  display: block;
   font-weight: 700; margin-bottom: .35rem;
   color: var(--text-soft);
   text-transform: uppercase; letter-spacing: .03em;
@@ -853,22 +875,40 @@ p { margin: 0 0 1em; }
 
 /* -------------------- Detail pages -------------------- */
 .job-detail, .news-detail {
-  padding-bottom: 3.5rem; max-width: 880px;
+  padding-bottom: 3.5rem;
+  max-width: 920px;
 }
+
+/* 🔥 Job detail page — बड़ा main thumbnail (80px → 120px) */
 .job-header {
   border-bottom: 1px solid var(--border);
   padding-bottom: 1.5rem; margin-bottom: 1.75rem;
 }
-.job-header-top { display: flex; align-items: center; gap: 1.15rem; }
-.job-thumb-lg {
-  border-radius: 14px; object-fit: cover;
-  background: var(--surface-2);
-  box-shadow: var(--shadow-sm);
+.job-header-top {
+  display: flex; align-items: flex-start;
+  gap: 1.35rem;
 }
-.job-header h1 { margin: 0; }
+.job-header-top > div {
+  flex: 1;
+  min-width: 0;
+}
+.job-thumb-lg {
+  width: 120px;
+  height: 120px;
+  border-radius: 18px;
+  object-fit: cover;
+  background: var(--surface-2);
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+.job-header h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.25;
+}
 .company-lg {
-  color: var(--muted); margin: .3rem 0 0;
-  font-size: 1.02rem; font-weight: 600;
+  color: var(--muted); margin: .35rem 0 0;
+  font-size: 1.05rem; font-weight: 600;
 }
 .job-tags {
   display: flex; flex-wrap: wrap; gap: .45rem;
@@ -910,17 +950,42 @@ p { margin: 0 0 1em; }
   width: 60px; height: 2px;
   background: linear-gradient(90deg, var(--primary), var(--secondary));
 }
+/* Related cards में भी बड़े thumb */
+.content-section .job-thumb {
+  width: 88px;
+  height: 88px;
+}
+.content-section .news-thumb-wrap {
+  aspect-ratio: 16 / 10;
+}
 
+/* News detail header */
 .news-header { margin-bottom: 2rem; }
 .news-header h1 { margin: .6rem 0 .55rem; }
 .subtitle {
   font-size: 1.12rem; color: var(--muted);
   margin: 0 0 .9rem; line-height: 1.6;
 }
+
+/* 🔥 News detail featured image — बड़ा, hover zoom */
 .featured-image {
-  margin: 1.75rem 0; border-radius: var(--radius);
-  overflow: hidden; box-shadow: var(--shadow-lg);
+  margin: 2rem 0 2.25rem;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  background: var(--surface-2);
 }
+.featured-image img {
+  width: 100%; height: auto;
+  max-height: 620px;
+  object-fit: cover;
+  display: block;
+  transition: transform .6s var(--ease-out);
+}
+.featured-image:hover img {
+  transform: scale(1.02);
+}
+
 .tags-row {
   display: flex; flex-wrap: wrap; gap: .45rem;
   margin: 1.75rem 0;
@@ -1209,6 +1274,11 @@ p { margin: 0 0 1em; }
   box-shadow: var(--shadow-lg);
 }
 .apply-page h1 { font-size: 1.75rem; }
+.apply-page img {
+  border-radius: var(--radius);
+  margin: 1rem 0;
+  box-shadow: var(--shadow-md);
+}
 .apply-url {
   word-break: break-all;
   background: var(--surface-2);
@@ -1588,7 +1658,30 @@ p { margin: 0 0 1em; }
   .search-bar input,
   .search-bar .btn { width: 100%; }
   .section { padding: 2.5rem 0; }
-  .job-header-top { flex-direction: column; align-items: flex-start; gap: .85rem; }
+
+  /* Mobile पर Job detail thumbnail थोड़ा छोटा */
+  .job-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .85rem;
+  }
+  .job-thumb-lg {
+    width: 90px;
+    height: 90px;
+    border-radius: 14px;
+  }
+  .featured-image {
+    margin: 1.5rem 0;
+    border-radius: var(--radius);
+  }
+  .featured-image img {
+    max-height: 380px;
+  }
+  .job-detail,
+  .news-detail {
+    max-width: 100%;
+  }
+
   .cta { padding: 2.25rem 1.25rem; border-radius: var(--radius); }
   .grid-cards { grid-template-columns: 1fr; }
   .grid-news { grid-template-columns: 1fr; }
