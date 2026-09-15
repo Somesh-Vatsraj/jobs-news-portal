@@ -1,6 +1,6 @@
 /* =========================================================
    Jobs & News Portal — Premium UI + Animations
-   (Bigger images on cards + detail pages included)
+   (Bigger images on cards + detail pages + new job card)
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
@@ -138,12 +138,8 @@ p { margin: 0 0 1em; }
   50% { background-position: 100% 50%; }
 }
 
-.animate-in {
-  animation: fadeInUp .6s var(--ease-out) both;
-}
-.section > .container > * {
-  animation: fadeInUp .5s var(--ease-out) both;
-}
+.animate-in { animation: fadeInUp .6s var(--ease-out) both; }
+.section > .container > * { animation: fadeInUp .5s var(--ease-out) both; }
 .section > .container > *:nth-child(1) { animation-delay: .02s; }
 .section > .container > *:nth-child(2) { animation-delay: .08s; }
 .section > .container > *:nth-child(3) { animation-delay: .14s; }
@@ -463,117 +459,202 @@ p { margin: 0 0 1em; }
 /* -------------------- Grids -------------------- */
 .grid-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 1.15rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.35rem;
 }
 .grid-news {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.35rem;
 }
 
-/* -------------------- Job Card (BIGGER images) -------------------- */
+/* =========================================================
+   JOB CARD — बड़ी image ऊपर (News card style)
+   ========================================================= */
 .job-card {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
   transition: all .3s var(--ease-out);
+  position: relative;
   animation: fadeInUp .5s var(--ease-out) both;
-}
-.job-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
-  transform: scaleX(0); transform-origin: left;
-  transition: transform .4s var(--ease-out);
-  z-index: 2;
 }
 .job-card:hover {
   box-shadow: var(--shadow-xl), 0 0 0 1px rgba(124,58,237,.1);
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   border-color: transparent;
 }
-.job-card:hover::before { transform: scaleX(1); }
-.job-card-link { display: block; padding: 1.2rem; color: var(--text); }
-
-.job-card-head {
-  display: flex; gap: 1rem;
-  align-items: flex-start;
-  margin-bottom: .9rem; position: relative;
+.job-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: var(--text);
+  text-decoration: none;
 }
 
-/* 🔥 Job card thumbnail — अब बड़ा (52px → 88px) */
-.job-thumb {
-  width: 88px;
-  height: 88px;
-  border-radius: 16px;
-  object-fit: cover;
+/* Image ऊपर — पूरी चौड़ाई */
+.job-card-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
   background: var(--surface-2);
+  overflow: hidden;
   flex-shrink: 0;
-  transition: transform .3s var(--spring);
-  box-shadow: var(--shadow-xs);
 }
-.job-card:hover .job-thumb {
-  transform: scale(1.05) rotate(-2deg);
+.job-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .5s var(--ease-out);
 }
-.job-thumb.placeholder {
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, #ede9fe, #faf5ff);
-  color: var(--primary); font-weight: 900; font-size: 1.9rem;
+.job-card:hover .job-card-image img {
+  transform: scale(1.06);
+}
+.job-card-image::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.12));
+  pointer-events: none;
 }
 
-.job-card-title {
-  flex: 1; min-width: 0;
-  padding-top: .15rem;
+/* Placeholder (जब image नहीं है) */
+.job-card-image.is-placeholder {
+  background: linear-gradient(135deg, #ede9fe 0%, #faf5ff 50%, #f5f3ff 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
 }
-.job-card-title h3 {
-  font-size: 1.08rem; margin: 0 0 .2rem;
+.job-card-image .job-thumb.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--primary);
+  background: transparent;
+  border-radius: 0;
+  font-family: var(--font-display);
+}
+
+/* Image पर badges (WFH / Featured) */
+.image-badge {
+  position: absolute;
+  top: .75rem;
+  padding: .32rem .7rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  z-index: 2;
+}
+.image-badge.badge-wfh {
+  left: .75rem;
+  background: rgba(220, 252, 231, .95);
+  color: #15803d;
+  border: 1px solid rgba(22, 163, 74, .25);
+}
+.image-badge.badge-featured {
+  right: .75rem;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.4);
+  box-shadow: 0 4px 10px rgba(245,158,11,.35);
+}
+
+/* Card body */
+.job-card-body {
+  padding: 1.1rem 1.15rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.job-cat {
+  display: inline-block;
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+  color: var(--primary-dark);
+  padding: .28rem .7rem;
+  border-radius: 8px;
+  font-size: .72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: .55rem;
+  align-self: flex-start;
+}
+
+.job-title {
+  font-size: 1.1rem;
   font-weight: 700;
-  line-height: 1.3;
+  margin: 0 0 .3rem;
+  line-height: 1.35;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   transition: color .2s;
+  font-family: var(--font-display);
+}
+.job-card:hover .job-title { color: var(--primary); }
+
+.job-company {
+  font-size: .9rem;
+  color: var(--muted);
+  margin: 0 0 .75rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .8rem;
+  font-size: .78rem;
+  color: var(--muted);
+  margin-bottom: .75rem;
+}
+.job-meta .meta {
+  display: inline-flex;
+  align-items: center;
+  gap: .28rem;
+  font-weight: 500;
+}
+.job-meta svg { stroke: currentColor; opacity: .7; }
+
+.job-desc {
+  color: var(--muted);
+  font-size: .86rem;
+  margin: 0 0 .9rem;
+  line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.job-card:hover .job-card-title h3 { color: var(--primary); }
-.job-card-title .company {
-  margin: .15rem 0 0; color: var(--muted);
-  font-size: .9rem; font-weight: 500;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.job-meta {
-  display: flex; flex-wrap: wrap; gap: .5rem .9rem;
-  font-size: .8rem; color: var(--muted); margin-bottom: .65rem;
-}
-.job-meta .meta {
-  display: inline-flex; align-items: center; gap: .3rem;
-  font-weight: 500;
-}
-.job-meta svg { stroke: currentColor; opacity: .7; }
-.job-cat {
-  display: inline-block; background: linear-gradient(135deg, #f5f3ff, #faf5ff);
-  color: var(--primary-dark);
-  padding: .28rem .7rem; border-radius: 8px;
-  font-size: .74rem; font-weight: 700;
-  margin-bottom: .65rem;
-  border: 1px solid rgba(124,58,237,.08);
-}
-.job-desc {
-  color: var(--muted); font-size: .88rem;
-  margin: 0 0 1rem; line-height: 1.6;
-  display: -webkit-box; -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical; overflow: hidden;
-}
+
 .job-card-foot {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border-top: 1px dashed var(--border);
   padding-top: .85rem;
+  margin-top: auto;
 }
-.posted { color: var(--muted-2); font-size: .78rem; font-weight: 500; }
+.job-card-foot .posted {
+  color: var(--muted-2);
+  font-size: .78rem;
+  font-weight: 500;
+}
 
 /* -------------------- Tags -------------------- */
 .tag {
@@ -585,7 +666,9 @@ p { margin: 0 0 1em; }
 .tag-wfh { background: var(--success-bg); color: #15803d; border-color: transparent; }
 .tag-featured { background: var(--warning-bg); color: #a16207; border-color: transparent; }
 
-/* -------------------- News Card (BIGGER image) -------------------- */
+/* =========================================================
+   NEWS CARD — बड़ी image ऊपर
+   ========================================================= */
 .news-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -601,7 +684,6 @@ p { margin: 0 0 1em; }
 }
 .news-card-link { display: block; color: var(--text); }
 
-/* 🔥 News card image — अब थोड़ी ज़्यादा tall (16:9 → 16:10) */
 .news-thumb-wrap {
   aspect-ratio: 16 / 10;
   background: var(--surface-2);
@@ -641,6 +723,7 @@ p { margin: 0 0 1em; }
   -webkit-box-orient: vertical; overflow: hidden;
   font-weight: 700; line-height: 1.35;
   transition: color .2s;
+  font-family: var(--font-display);
 }
 .news-card:hover .news-card-body h3 { color: var(--primary); }
 .news-card-body p {
@@ -873,13 +956,15 @@ p { margin: 0 0 1em; }
   font-size: .9rem;
 }
 
-/* -------------------- Detail pages -------------------- */
+/* =========================================================
+   Detail pages — बड़ी featured image content से पहले
+   ========================================================= */
 .job-detail, .news-detail {
   padding-bottom: 3.5rem;
   max-width: 920px;
 }
 
-/* 🔥 Job detail page — बड़ा main thumbnail (80px → 120px) */
+/* Job detail header */
 .job-header {
   border-bottom: 1px solid var(--border);
   padding-bottom: 1.5rem; margin-bottom: 1.75rem;
@@ -950,13 +1035,27 @@ p { margin: 0 0 1em; }
   width: 60px; height: 2px;
   background: linear-gradient(90deg, var(--primary), var(--secondary));
 }
-/* Related cards में भी बड़े thumb */
-.content-section .job-thumb {
-  width: 88px;
-  height: 88px;
+
+/* 🔥 Job detail — बड़ी featured image content से पहले */
+.featured-image.job-featured-image {
+  margin: 1.75rem 0 2rem;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  background: var(--surface-2);
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  position: relative;
 }
-.content-section .news-thumb-wrap {
-  aspect-ratio: 16 / 10;
+.featured-image.job-featured-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .6s var(--ease-out);
+}
+.featured-image.job-featured-image:hover img {
+  transform: scale(1.02);
 }
 
 /* News detail header */
@@ -967,28 +1066,35 @@ p { margin: 0 0 1em; }
   margin: 0 0 .9rem; line-height: 1.6;
 }
 
-/* 🔥 News detail featured image — बड़ा, hover zoom */
-.featured-image {
+/* 🔥 News detail — featured image big + hover zoom */
+.news-detail .featured-image {
   margin: 2rem 0 2.25rem;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-xl);
   background: var(--surface-2);
+  width: 100%;
+  aspect-ratio: 16 / 9;
 }
-.featured-image img {
-  width: 100%; height: auto;
-  max-height: 620px;
+.news-detail .featured-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
   transition: transform .6s var(--ease-out);
 }
-.featured-image:hover img {
+.news-detail .featured-image:hover img {
   transform: scale(1.02);
 }
 
 .tags-row {
   display: flex; flex-wrap: wrap; gap: .45rem;
   margin: 1.75rem 0;
+}
+
+/* Related cards भी same ratio */
+.content-section .news-thumb-wrap {
+  aspect-ratio: 16 / 10;
 }
 
 /* -------------------- Search -------------------- */
@@ -1119,9 +1225,7 @@ p { margin: 0 0 1em; }
   color: #fff; border-color: transparent;
   box-shadow: var(--shadow-glow-sm);
 }
-.page-ellipsis {
-  padding: .6rem .4rem; color: var(--muted);
-}
+.page-ellipsis { padding: .6rem .4rem; color: var(--muted); }
 
 /* -------------------- Empty / Error -------------------- */
 .empty, .empty-state {
@@ -1659,7 +1763,16 @@ p { margin: 0 0 1em; }
   .search-bar .btn { width: 100%; }
   .section { padding: 2.5rem 0; }
 
-  /* Mobile पर Job detail thumbnail थोड़ा छोटा */
+  /* Mobile पर Job / News card image थोड़ी और tall */
+  .job-card-image,
+  .news-thumb-wrap {
+    aspect-ratio: 4 / 3;
+  }
+  .job-card-body { padding: 1rem; }
+  .job-title { font-size: 1.02rem; }
+  .job-card-image .job-thumb.placeholder { font-size: 2.75rem; }
+
+  /* Job detail thumbnail छोटा mobile पर */
   .job-header-top {
     flex-direction: column;
     align-items: flex-start;
@@ -1670,12 +1783,11 @@ p { margin: 0 0 1em; }
     height: 90px;
     border-radius: 14px;
   }
-  .featured-image {
-    margin: 1.5rem 0;
+  .featured-image.job-featured-image,
+  .news-detail .featured-image {
+    aspect-ratio: 4 / 3;
     border-radius: var(--radius);
-  }
-  .featured-image img {
-    max-height: 380px;
+    margin: 1.5rem 0;
   }
   .job-detail,
   .news-detail {
@@ -1683,7 +1795,7 @@ p { margin: 0 0 1em; }
   }
 
   .cta { padding: 2.25rem 1.25rem; border-radius: var(--radius); }
-  .grid-cards { grid-template-columns: 1fr; }
+  .grid-cards,
   .grid-news { grid-template-columns: 1fr; }
 }
 
