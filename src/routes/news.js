@@ -39,7 +39,12 @@ export async function newsDetailRoute(request, env, slug) {
 
   const relatedJobs = await listJobs(env, { status: 'published', limit: 3 });
 
-  const body = newsDetailPage({ settings, article, relatedNews: relatedNews || [], relatedJobs, baseUrl });
+  // Fetch ALL categories for sidebar
+  const jobCats = await listCategories(env, 'job');
+  const newsCats = await listCategories(env, 'news');
+  const categories = [...jobCats, ...newsCats];
+
+  const body = newsDetailPage({ settings, article, relatedNews: relatedNews || [], relatedJobs, categories, baseUrl });
   return html(body, 200, { 'cache-control': 'public, max-age=300, s-maxage=1800' });
 }
 
