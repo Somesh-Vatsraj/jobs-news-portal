@@ -17,13 +17,17 @@ export async function createSession(env, adminId) {
   return { token, csrf, expires };
 }
 
-export function buildSessionCookie(token, expires) {
+// isHttps: Secure flag सिर्फ HTTPS पर लगाओ
+// (localhost HTTP dev में Secure cookie browser reject कर देता है)
+export function buildSessionCookie(token, expires, isHttps = true) {
   const exp = new Date(expires).toUTCString();
-  return `${COOKIE_NAME}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=${exp}`;
+  const secure = isHttps ? '; Secure' : '';
+  return `${COOKIE_NAME}=${token}; Path=/; HttpOnly${secure}; SameSite=Lax; Expires=${exp}`;
 }
 
-export function buildLogoutCookie() {
-  return `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+export function buildLogoutCookie(isHttps = true) {
+  const secure = isHttps ? '; Secure' : '';
+  return `${COOKIE_NAME}=; Path=/; HttpOnly${secure}; SameSite=Lax; Max-Age=0`;
 }
 
 export function getCookie(request, name) {
@@ -67,4 +71,13 @@ export async function requireAdmin(request, env) {
   const session = await getSession(request, env);
   if (!session) return null;
   return session;
+}
+
+// Helper: check if request came over HTTPS
+export function isHttpsRequest(request) {
+  try {
+    return new URL(request.url).protocol === 'https:';
+  } catch {
+    return true;
+  }
 }
