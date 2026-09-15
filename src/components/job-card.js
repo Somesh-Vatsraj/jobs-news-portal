@@ -6,9 +6,6 @@ export function JobCard({ job }) {
     ? `<img src="${esc(job.thumbnail)}" alt="${esc(job.thumbnail_alt || job.title)}" loading="lazy" width="600" height="375">`
     : `<div class="job-thumb placeholder">${esc((job.company || '?').charAt(0))}</div>`;
 
-  const descText = (job.content || '').replace(/<[^>]+>/g, ' ').trim();
-  const shortDesc = descText.length > 140 ? descText.slice(0, 140) + '…' : descText;
-
   return `
 <article class="job-card">
   <a href="/jobs/${esc(job.slug)}" class="job-card-link" aria-label="${esc(job.title)}">
@@ -30,8 +27,6 @@ export function JobCard({ job }) {
         ${job.salary ? `<span class="meta">${esc(job.salary)}</span>` : ''}
         ${job.experience ? `<span class="meta">${esc(job.experience)}</span>` : ''}
       </div>
-
-      ${shortDesc ? `<p class="job-desc">${esc(shortDesc)}</p>` : ''}
 
       <div class="job-card-foot">
         <span class="posted">${esc(timeAgo(job.published_at || job.created_at))}</span>
