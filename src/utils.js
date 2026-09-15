@@ -71,6 +71,15 @@ export function parseIntSafe(v, fallback = 1, max = 10000) {
   return Math.min(n, max);
 }
 
+// Parse booleans from strings, numbers, booleans.
+// Treats "1", "true", "on", "yes", true, 1 as true; everything else false.
+export function parseBool(v) {
+  if (v === true || v === 1) return true;
+  if (v === false || v === 0 || v === null || v === undefined) return false;
+  const s = String(v).trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'on' || s === 'yes';
+}
+
 export function isValidHttpUrl(str) {
   if (!str) return false;
   try {
