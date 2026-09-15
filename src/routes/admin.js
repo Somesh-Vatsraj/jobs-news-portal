@@ -1,5 +1,5 @@
-import { json, slugify, esc, isValidHttpUrl, parseBool } from '../utils.js';
-import { sanitizeHtml, checkCsrf, validateExternalUrl } from '../security.js';
+import { json, slugify, esc, isValidHttpUrl, parseBool, sanitizeHtml } from '../utils.js';
+import { checkCsrf, validateExternalUrl } from '../security.js';
 import {
   getSettings, setSetting, listJobs, listNews, getJobById, getJobBySlug, createJob, updateJob, deleteJob,
   getNewsById, createNews, updateNews, deleteNews, listSubmissions, getSubmission,
@@ -204,7 +204,6 @@ export async function adminNewsPost(request, env, session) {
   const body = await request.json().catch(() => ({}));
   const data = normalizeNewsData(body);
   if (!data.title) return json({ error: 'Title is required' }, 400);
-  const existing = await getNewsById(env, -1); // no-op
   const dup = await env.DB.prepare('SELECT id FROM news WHERE slug = ?').bind(data.slug).first();
   if (dup) data.slug = data.slug + '-' + Date.now().toString(36).slice(-4);
   const id = await createNews(env, data);
