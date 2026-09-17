@@ -19,6 +19,7 @@ No React, no Tailwind, no build step. Just HTML, custom CSS, and vanilla JavaScr
 - User submission system (pending moderation)
 - Fully responsive and mobile-first
 - Cloudflare asset caching for public pages
+<img width="1161" height="901" alt="Screenshot 2026-09-17 122000" src="https://github.com/user-attachments/assets/e5aadef4-cb89-47e5-b577-10a27f461a0d" />
 
 ## Requirements
 
